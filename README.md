@@ -113,11 +113,11 @@ force the profiles to be regenerated with each new setting.
 
 ```console
 $ ./icc-brightness clean
-2021-08-17 11:34:56,362 - INFO: Removing: /home/kal/.local/share/icc/brightness_102_512.icc
-2021-08-17 11:34:56,376 - INFO: Removing: /home/kal/.local/share/icc/brightness_128_512.icc
+2021-08-17 11:34:56,362 - INFO: Removing: ~/.local/share/icc/brightness_102_512.icc
+2021-08-17 11:34:56,376 - INFO: Removing: ~/.local/share/icc/brightness_128_512.icc
 ...
-2021-08-17 11:34:56,700 - INFO: Removing: /home/kal/.local/share/icc/brightness_486_512.icc
-2021-08-17 11:34:56,730 - INFO: Removing: /home/kal/.local/share/icc/brightness_435_512.icc
+2021-08-17 11:34:56,700 - INFO: Removing: ~/.local/share/icc/brightness_486_512.icc
+2021-08-17 11:34:56,730 - INFO: Removing: ~/.local/share/icc/brightness_435_512.icc
 ```
 
 The `list` mode lists the device models that the script can currently 'see' and
@@ -194,3 +194,5 @@ rm -f ~/.config/autostart/icc-brightness.desktop
 
 Huge thanks to Udi Fuchs (@udifuchs) for creating the initial project and making
 my shiny new laptop usable.
+
+Thanks to Llane (@midnex) for code clean up suggestions :smile:

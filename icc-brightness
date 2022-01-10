@@ -161,13 +161,26 @@ def icc_brightness(brightness, max_brightness):
     if profile_path is None:
         logging.debug('Create new profile %s', icc_filename)
         icc_filepath = os.path.join(TEMP_FOLDER, icc_filename)
-        subprocess.run(
-            [
-                ICC_BRIGHTNESS_GEN, icc_filepath, str(brightness), str(max_brightness)
-            ],
-            check=True
-        )
-        subprocess.check_output(['colormgr', 'import-profile', icc_filepath])
+        try:
+            subprocess.run(
+                [
+                    ICC_BRIGHTNESS_GEN,
+                    icc_filepath,
+                    str(brightness), 
+                    str(max_brightness)
+                ],
+                check=True
+            )
+        except subprocess.CalledProcessError as ex:
+            # We should never get here ... but log the reason if we do
+            logging.error('Failed to create new profile: %s', ex.stdout)
+
+        logging.debug('Import new profile %s', icc_filepath)
+        try:
+            subprocess.run(['colormgr', 'import-profile', icc_filepath], check=True)
+        except subprocess.CalledProcessError as ex:
+            # We should never get here ... but log the reason if we do
+            logging.error('Failed to import new profile: %s', ex.stdout)
 
         logging.debug('Retrieve new profile %s', icc_filename)
         profile_path = find_profile_path(icc_filename)
@@ -181,16 +194,20 @@ def icc_brightness(brightness, max_brightness):
                 check=True
             )
         except subprocess.CalledProcessError as ex:
-            # We should never get here
+            # We should never get here ... but log the reason if we do
             logging.error('Failed to add profile: %s', ex.stdout)
 
     logging.debug('Make profile default for device %s', device_path)
-    subprocess.run(
-        [
-            'colormgr', 'device-make-profile-default', device_path, profile_path
-        ],
-        check=True
-    )
+    try:
+        subprocess.run(
+            [
+                'colormgr', 'device-make-profile-default', device_path, profile_path
+            ],
+            check=True
+        )
+    except subprocess.CalledProcessError as ex:
+        # We should never get here ... but log the reason if we do
+        logging.error('Failed to add profile: %s', ex.stdout)
 
 
 def icc_brightness_apply():

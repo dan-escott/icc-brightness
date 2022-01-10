@@ -4,7 +4,7 @@
 # Copyright 2021, Kahlil Hodgson (modifications)
 # SPDX-License-Identifier: MIT
 
-"""Control OLED display brightness by applying ICC color profiles.
+"""Control display brightness by applying ICC color profiles.
 
 icc-brightness set brightness max-brightness - set brightness manually
 icc-brightness apply - apply brightness from system setting
@@ -238,7 +238,7 @@ def main():
     logger = logging.getLogger()
 
     parser = argparse.ArgumentParser(
-        description="Control OLED display brightness by applying ICC color profiles"
+        description="Control display brightness by applying ICC color profiles"
     )
 
     subparsers = parser.add_subparsers(dest="action")

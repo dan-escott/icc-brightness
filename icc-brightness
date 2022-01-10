@@ -96,7 +96,7 @@ def find_device_path():
 
     # If there is more than one device being managed, there will be multiple data blocks
     # separated by blank lines. In each block the 'Object Path' line will always occur
-    # before the 'Model' or 'Embeded' line, so we repeatedly set the object_path and
+    # before the 'Model' or 'Embedded' line, so we repeatedly set the object_path and
     # only break when we find an appropriate match. If we are not targeting a specific
     # device, we just pick the first embedded device we find (i.e. the laptops screen).
 

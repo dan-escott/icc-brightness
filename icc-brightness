@@ -20,6 +20,7 @@ import os
 import re
 import signal
 import subprocess
+import sys
 import threading
 import time
 import unicodedata
@@ -27,6 +28,16 @@ from types import SimpleNamespace
 
 TEMP_FOLDER = "/tmp"
 BACKLIGHT_PATH = "/sys/class/backlight/intel_backlight"
+
+# Try some known working locations for the backlight device
+if os.path.exists("/sys/class/backlight/intel_backlight"):
+    BACKLIGHT_PATH = "/sys/class/backlight/intel_backlight"
+elif os.path.exists("/sys/class/backlight/acpi_video0"):
+    BACKLIGHT_PATH = "/sys/class/backlight/acpi_video0"
+else:
+    logging.error("Could not find sys path to backlight device")
+    sys.exit(1)
+
 BRIGHTNESS_PATH = os.path.join(BACKLIGHT_PATH, "brightness")
 MAX_BRIGHTNESS_PATH = os.path.join(BACKLIGHT_PATH, "max_brightness")
 

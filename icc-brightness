@@ -137,11 +137,12 @@ def icc_brightness(brightness, max_brightness):
     device_path = find_device_path()
     if device_path is None:
         # This could happen during startup if the colord is not running yet
-        logging.warning("No matching device found")
+        logging.warning("No matching device found yet")
         return
 
     brightness = rounded(brightness, max_brightness)
-    logging.debug("Rounding brightness ratio to %.2f", brightness / max_brightness)
+    logging.info("Setting brightness ratio to %.2f", brightness / max_brightness)
+
     icc_filename = "%sbrightness_%d_%d.icc" % (target.slug, brightness, max_brightness)
     logging.debug("Searching for profile %s", icc_filename)
     profile_path = find_profile_path(icc_filename)

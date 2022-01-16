@@ -1,6 +1,6 @@
 # ICC Brightness
 
-Control OLED display brightness by applying ICC color profiles.
+Control display brightness by applying ICC color profiles.
 
 *This is a maintained fork of the
 [icc-brightness](https://github.com/udifuchs/icc-brightness) project by Udi
@@ -9,8 +9,7 @@ Fuchs.*
 ## Introduction
 
 This tool is a work-around for displays whose brightness control is not
-supported by the Linux kernel versions before 5.12.  Even if you have a more
-recent kernel, you may prefer the brightness values that this tool provides.  It
+supported by the Linux kernel (e.g. OLED displays before version 5.12).  It
 performs well on OLED displays, since these have very dark black point and their
 power consumption is relative to the brightness of the viewed content.
 
@@ -22,7 +21,7 @@ By default this tool targets embedded laptop displays, however, you can use the
 
 This tool was developed by @udifuchs for the Lenovo ThinkPad X1 Yoga OLED
 display.  Later development by @tartansandal was performed on a Dell XPS 15 7590
-with an OLED display.
+with an OLED display. Support for Razer Blade/Stealth and other non-Intel systems was suggested by @midnex.
 
 ## Build
 
@@ -195,4 +194,5 @@ rm -f ~/.config/autostart/icc-brightness.desktop
 Huge thanks to Udi Fuchs (@udifuchs) for creating the initial project and making
 my shiny new laptop usable.
 
-Thanks to Llane (@midnex) for code clean up suggestions :smile:
+Thanks to Llane Rost (@midnex) for code clean up and non-Intel support
+suggestions :smile:

@@ -20,7 +20,8 @@ Embedded laptop displays are the default target, however, you can use the
 
 This tool was developed by @udifuchs for the Lenovo ThinkPad X1 Yoga OLED
 display.  Later development by @tartansandal was performed on a Dell XPS 15 7590
-with an OLED display. Support for Razer Blade/Stealth and other non-Intel systems was suggested by @midnex.
+with an OLED display. Support for Razer Blade/Stealth and other non-Intel
+systems was suggested by @midnex.
 
 ## Build
 
@@ -187,6 +188,27 @@ rm -f ~/.local/bin/icc-brightness-gen
 rm -f ~/.local/bin/icc-brightness
 rm -f ~/.config/autostart/icc-brightness.desktop
 ```
+
+## Troubleshooting
+
+If things are not working as you expect, you might want to check the system
+logs. On systems that use `systemd` journal you can do this with the following
+command:
+
+```console
+journalctl --user --identifier icc-brightness.desktop --boot
+```
+
+Note that log lines containing
+
+```text
+WARNING: No matching device found yet
+```
+
+immediately after logging in are to be expected. They are due to the
+`icc-brightness` autostart application being started before the `colord` service
+is ready. If these messages persist, you may have and issue with the `colord`
+service.
 
 ## Thanks
 

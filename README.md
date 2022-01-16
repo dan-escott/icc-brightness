@@ -12,11 +12,10 @@ This tool is a work-around for displays whose brightness control is not
 supported by the Linux kernel (e.g. OLED displays before version 5.12).  It
 performs well on OLED displays, since these have very dark black point and their
 power consumption is relative to the brightness of the viewed content.
-
-This tool can also be used on an LCD display, but in that case you really want
+It can also be used on an LCD display, but in that case you really want
 to control the brightness directly using the display backlight.
 
-By default this tool targets embedded laptop displays, however, you can use the
+Embedded laptop displays are the default target, however, you can use the
 `--target` option described below to target external displays instead.
 
 This tool was developed by @udifuchs for the Lenovo ThinkPad X1 Yoga OLED

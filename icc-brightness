@@ -205,7 +205,7 @@ def icc_brightness_apply():
 
 def handler(signum, frame):
     """Respond to changes to the system brightness settings"""
-    logging.debug("Running handler for signum %d and frame %s" % (signum, frame))
+    logging.debug("Running handler for signum %d and frame %s", signum, frame)
     if LOCK.acquire(blocking=False):
         try:
             icc_brightness_apply()
@@ -265,14 +265,14 @@ def main():
         if not isinstance(numeric_level, int):
             raise ValueError("Invalid log level: %s" % args.loglevel)
         logger.setLevel(numeric_level)
-        logger.info("Setting log level: %s" % loglevel)
+        logger.info("Setting log level: %s", loglevel)
 
     if args.logfile is not None:
         logfile = args.logfile
         fh = logging.FileHandler(logfile, mode="a")
         fh.setFormatter(logging.Formatter(log_format))
         logger.addHandler(fh)
-        logger.info("Logging to file: %s" % logfile)
+        logger.info("Logging to file: %s", logfile)
 
     if args.action == "clean":
         clean()

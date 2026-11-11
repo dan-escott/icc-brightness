@@ -47,6 +47,8 @@ ICC_BRIGHTNESS_GEN = os.path.join(CWD, "icc-brightness-gen")
 LOCK = threading.Lock()
 
 target = SimpleNamespace(device=None, slug="")
+device_cache = SimpleNamespace(path=None)
+PENDING = threading.Event()
 
 
 def clean():
@@ -141,11 +143,15 @@ def rounded(brightness, max_brightness, factor=0.05):
     )
 
 
-def icc_brightness(brightness, max_brightness):
+def icc_brightness(brightness, max_brightness, retry=True):
     """Set brightness using an appropriate color profile"""
 
+    brightness_in = brightness
     logging.debug("Searching for device")
-    device_path = find_device_path()
+    # colormgr device queries are slow (~0.6s), so cache the path
+    device_path = device_cache.path
+    if device_path is None:
+        device_path = device_cache.path = find_device_path()
     if device_path is None:
         # This could happen during startup if the colord is not running yet
         logging.warning("No matching device found yet")
@@ -185,15 +191,14 @@ def icc_brightness(brightness, max_brightness):
         logging.debug("Retrieve new profile %s", icc_filename)
         profile_path = find_profile_path(icc_filename)
 
-        logging.debug("apply new profile to device %s", device_path)
-        try:
-            subprocess.run(
-                ["colormgr", "device-add-profile", device_path, profile_path],
-                check=True,
-            )
-        except subprocess.CalledProcessError as ex:
-            # We should never get here ... but log the reason if we do
-            logging.error("Failed to add profile: %s", ex.stdout)
+    # colord can drop profiles from the device (e.g. after re-login or screen
+    # reset) while the profile itself survives, so always (re)attach it.
+    logging.debug("apply profile to device %s", device_path)
+    subprocess.run(
+        ["colormgr", "device-add-profile", device_path, profile_path],
+        check=False,
+        capture_output=True,
+    )
 
     logging.debug("Make profile default for device %s", device_path)
     try:
@@ -202,8 +207,11 @@ def icc_brightness(brightness, max_brightness):
             check=True,
         )
     except subprocess.CalledProcessError as ex:
-        # We should never get here ... but log the reason if we do
-        logging.error("Failed to add profile: %s", ex.stdout)
+        # The cached device may be stale (display re-created): look it up again
+        device_cache.path = None
+        if retry:
+            return icc_brightness(brightness_in, max_brightness, retry=False)
+        logging.error("Failed to make profile default: %s", ex.stdout)
 
 
 def icc_brightness_apply():
@@ -218,14 +226,20 @@ def icc_brightness_apply():
 def handler(signum, frame):
     """Respond to changes to the system brightness settings"""
     logging.debug("Running handler for signum %d and frame %s", signum, frame)
+    # Events arriving mid-apply set PENDING so the latest value is re-applied
+    # instead of being dropped.
+    PENDING.set()
     if LOCK.acquire(blocking=False):
         try:
-            icc_brightness_apply()
-        except subprocess.CalledProcessError as ex:
-            logging.exception("Error during call to icc_brightness")
-            logging.error(ex.stdout)
-        except BaseException:
-            logging.exception("Error during call to icc_brightness")
+            while PENDING.is_set():
+                PENDING.clear()
+                try:
+                    icc_brightness_apply()
+                except subprocess.CalledProcessError as ex:
+                    logging.exception("Error during call to icc_brightness")
+                    logging.error(ex.stdout)
+                except BaseException:
+                    logging.exception("Error during call to icc_brightness")
         finally:
             LOCK.release()
 
